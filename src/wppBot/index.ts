@@ -1,3 +1,4 @@
+import {singleton} from 'tsyringe'
 import { create, Whatsapp } from "@wppconnect-team/wppconnect";
 import EventEmitter from "events";
 
@@ -6,6 +7,7 @@ type qrCode = {
   code: string | null;
 };
 
+@singleton()
 export class Wpp extends EventEmitter {
   client: Whatsapp | null;
   qrCode: qrCode;

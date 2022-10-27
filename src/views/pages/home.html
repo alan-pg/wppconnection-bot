@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bootstrap demo</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
+      crossorigin="anonymous"
+    />
+    <style>
+      .containerT {
+        height: 100vh;
+        width: 100vw;
+      }
+      header {
+        width: 100%;
+        height: 30%;
+        background-color: #00a884;
+      }
+      main {
+        width: 100%;
+        height: 70%;
+        background-color: #f0f2f5;
+        display: flex;
+        justify-content: center;
+        position: relative;
+      }
+      .content {
+        position: absolute;
+        top: -100px;
+
+        width: 70%;
+        height: 100%;
+
+        display: grid;
+        grid-template-columns: 50% 50%;
+        gap: 10px;
+
+        padding: 20px;
+
+        background-color: #ffffff;
+        border-radius: 3px;
+        box-shadow: 0 17px 50px 0 rgb(11 20 26 / 19%),
+          0 12px 15px 0 rgb(11 20 26 / 24%);
+      }
+      .leftCard {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .rightCard {
+        display: flex;
+        justify-content: center;
+      }
+
+      .myButton {
+        display: inline-block;
+        outline: none;
+        cursor: pointer;
+        font-weight: 500;
+        border-radius: 3px;
+        padding: 0 16px;
+        border-radius: 4px;
+        color: #fff;
+        background: #6200ee;
+        line-height: 1.15;
+        font-size: 12px;
+        height: 36px;
+        word-spacing: 0px;
+        letter-spacing: 0.0892857143em;
+        text-decoration: none;
+        text-transform: uppercase;
+        min-width: 64px;
+        border: none;
+        text-align: center;
+        box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%),
+          0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
+        transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .myButton:hover {
+        background: rgb(98, 0, 238);
+        box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%),
+          0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
+      }
+      .qrCode {
+        width: 250px;
+        height: 250px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="containerT">
+      <header>
+        <div class="header">
+          <h1>bot</h1>
+        </div>
+      </header>
+      <main>
+        <div class="content">
+          <div class="leftCard">
+            <div>
+              <h1 id="name"></h1>
+              <h1 id="wppNumber"></h1>
+              <h1 id="wppVersion"></h1>
+              <h1 id="batteryLevel"></h1>
+            </div>
+            <div>
+              <button class="myButton" onclick="handleCommand('stop')">
+                desconectar
+              </button>
+              <button class="myButton" onclick="handleCommand('start')">
+                conectar
+              </button>
+              <button class="myButton" onclick="handleCommand('restart')">
+                reiniciar
+              </button>
+            </div>
+          </div>
+          <div class="rightCard">
+            <h1 id="statusSession"></h1>
+            <h1 id="attempts"></h1>
+            <img class="qrCode" id="qrcode" src="" />
+          </div>
+        </div>
+      </main>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+      crossorigin="anonymous"
+    ></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./../scripts/home.js"></script>
+  </body>
+</html>

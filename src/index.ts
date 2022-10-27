@@ -1,15 +1,17 @@
-import { Message } from "@wppconnect-team/wppconnect";
-import { Wpp } from "./wpp";
+import "reflect-metadata";
+import { container } from "tsyringe";
+import { server, io } from "./server";
+import { Wpp } from "./wppBot";
+import { WppSocket } from "./wppSocket";
 
-const wpp = new Wpp();
+const port = 3000;
 
-async function start() {
-  await wpp.init("teste");
-  wpp.on("onMessage", async (message: Message) => {
-    console.log("recived message", message);
-    if (message.body === "@bot") {
-      await wpp.client?.sendText(message.from, "🤖 hopee!");
-    }
-  });
-}
-start();
+const wppBot = container.resolve(Wpp);
+
+const wppSocket = new WppSocket();
+
+wppBot.init('teste')
+
+io.on("connection", wppSocket.connection);
+
+server.listen(port, () => console.log("bot started on port", port));
