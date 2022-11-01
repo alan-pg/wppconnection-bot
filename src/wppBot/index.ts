@@ -1,38 +1,45 @@
-import {singleton} from 'tsyringe'
-import { create, Whatsapp } from "@wppconnect-team/wppconnect";
+import { singleton } from "tsyringe";
+import { create, HostDevice, Whatsapp } from "@wppconnect-team/wppconnect";
 import EventEmitter from "events";
 
 type qrCode = {
-  attemps: number;
+  attempts: number;
   code: string | null;
 };
 
 @singleton()
 export class Wpp extends EventEmitter {
   client: Whatsapp | null;
+  isConnected: boolean;
   qrCode: qrCode;
   statusSession: string;
+  hostDevice: HostDevice;
 
   constructor() {
     super();
     this.client = null;
+    this.isConnected = false;
     this.qrCode = {
-      attemps: 0,
+      attempts: 0,
       code: null,
     };
     this.statusSession = "not started";
+    this.hostDevice = {} as HostDevice;
   }
 
-  async init(sessionName: string) {
+  async start(sessionName: string) {
+    this.emit("statusSession", "starting")
     const client = await create({
       session: sessionName,
-      catchQR: (code, _, attemps) => {
-        console.log("attemps", attemps);
-        this.qrCode = { attemps, code };
-        this.emit("qrCode"), { attemps, code };
+      logQR: false,
+      autoClose: 0,
+      catchQR: (code, _, attempts) => {
+        console.log("attempts", attempts);
+        this.qrCode = { attempts, code };
+        this.emit("qrCode", { attempts, code });
       },
-      statusFind: (statusSession, session) => {
-        console.log("statusSession, session", statusSession, session);
+      statusFind: (statusSession) => {
+        console.log("statusSession, session", statusSession);
         this.statusSession = statusSession;
         this.emit("statusSession", statusSession);
       },
@@ -41,9 +48,77 @@ export class Wpp extends EventEmitter {
         this.emit("loadingScreen", { percent, message });
       },
     });
-    client.onMessage((message) =>{
-        this.emit('onMessage', message)
-    })
+    client.getHostDevice().then((data) => {
+      console.log("getHostDevice", data);
+      this.hostDevice = data;
+      this.emit("wppConnected", data);
+    });
+    client.onMessage((message) => {
+      this.emit("onMessage", message);
+    });
+    this.qrCode = {
+      attempts: 0,
+      code: null,
+    };
     this.client = client;
+  }
+
+  async logout() {
+    try {
+      this.emit("statusSession", "logging out")
+      const logout = await this.client?.logout();
+      console.log("logout", logout);
+      this.emit("statusSession", "closing session")
+      const close = await this.client?.close();
+      console.log("logout success", close);
+    } catch (error) {
+      console.log("logout error", error);
+    } finally {
+      this.client = null;
+    }
+  }
+
+  async stop() {
+    try {
+      this.emit("statusSession", "closing session")
+      const close = await this.client?.close();
+      console.log("stop success", close);
+    } catch (error) {
+      console.log("stop error", error);
+    } finally {
+      this.client = null;
+    }
+  }
+
+  async restart() {
+    this.emit("statusSession", "restarting session")
+    if (this.client) {
+      try {
+       /*  this.client.getConnectionState
+        this.client.isConnected
+        this.client.isLoggedIn
+        this.client.isMultiDevice
+        this.client.onStateChange
+        this.client.onStreamChange
+        this.client.session
+        this.client.useHere */
+        this.emit("statusSession", "closing session")
+        await this.client.close();
+      } catch (error) {
+        console.log("restart close error", error);
+      } finally {
+        this.client = null;
+      }
+    }
+    this.start("bot");
+  }
+
+  getStatus() {
+    return {
+      isConnected: this.isConnected,
+      qrCode: this.qrCode,
+      statusSession: this.statusSession,
+      hostDevice: this.hostDevice,
+    };
   }
 }
