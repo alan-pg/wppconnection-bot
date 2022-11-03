@@ -90,6 +90,15 @@ export class Wpp extends EventEmitter {
     }
   }
 
+  async useHere(){
+    try {
+      
+     
+    } catch (error: any) {
+      console.log('reload page error', error.message);
+    }
+  }
+
   async restart() {
     this.emit("statusSession", "restarting session")
     if (this.client) {
