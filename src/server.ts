@@ -32,6 +32,4 @@ app.engine("html", renderFile);
 
 app.set("view engine", "html");
 
-app.use(routes)
-
 export { server, app, io };

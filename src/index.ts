@@ -1,37 +1,22 @@
 import "reflect-metadata";
 import { container } from "tsyringe";
-import { server, io } from "./server";
+import { useBot } from "./middlewares/useWppBot";
+import { routes } from "./routes";
+import { server, io, app } from "./server";
 import { Wpp } from "./wppBot";
 
 const port = 3000;
 
 const wppBot = container.resolve(Wpp);
 
-wppBot.start("bot");
+app.use(useBot(wppBot));
+app.use(routes)
+
+//wppBot.start("bot");
 
 io.on("connection", (socket) => {
   console.log("client connected");
-  socket.emit("status", wppBot.getStatus());
-  socket.on("command", (cmd) => {
-    console.log('on cmd', cmd);
-    switch (cmd) {
-      case "start":
-        wppBot.start("bot");
-        break;
-      case "stop":
-        wppBot.stop();
-        break
-      case "restart":
-        wppBot.restart();
-        break;
-      case "logout":
-        wppBot.logout();
-        break;
-      default:
-        console.log("cmd not found");
-        break;
-    }
-  });
+  socket.emit("status", wppBot.getStatus());  
 });
 
 wppBot
