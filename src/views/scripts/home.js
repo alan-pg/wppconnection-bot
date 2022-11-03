@@ -1,6 +1,31 @@
 const socket = io();
+console.log("axios", axios);
 
-function updateQrCode({ code, attempts }) { 
+const api = axios.create({
+  baseURL: "http://localhost:3000",
+});
+
+async function sessionStart() {
+  const resp = await api.get("/session/start");
+  console.log("start/", resp.data);
+}
+
+async function sessionStop() {
+  const resp = await api.get("/session/stop");
+  console.log("stop/", resp.data);
+}
+
+async function sessionLogout() {
+  const resp = await api.get("/session/logout");
+  console.log("logout/", resp.data);
+}
+
+async function sessionStatus() {
+  const resp = await api.get("/session/status");
+  console.log("status/", resp.data);
+}
+
+function updateQrCode({ code, attempts }) {
   if (code) {
     document.getElementById("qrcode").src = code;
     document.getElementById("attempts").innerText = attempts;

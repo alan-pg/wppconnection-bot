@@ -108,18 +108,9 @@
               <h1 id="batteryLevel"></h1>
             </div>
             <div>
-              <button class="myButton" onclick="handleCommand('logout')">
-                logout
-              </button>
-              <button class="myButton" onclick="handleCommand('start')">
-                start
-              </button>
-              <button class="myButton" onclick="handleCommand('stop')">
-                stop
-              </button>
-              <button class="myButton" onclick="handleCommand('restart')">
-                restart
-              </button>
+              <button class="myButton" onclick="sessionStart()">start</button>
+              <button class="myButton" onclick="sessionStop()">stop</button>
+              <button class="myButton" onclick="sessionLogout()">logout</button>
             </div>
           </div>
           <div class="rightCard">
@@ -136,6 +127,7 @@
       crossorigin="anonymous"
     ></script>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="./../scripts/home.js"></script>
   </body>
 </html>
