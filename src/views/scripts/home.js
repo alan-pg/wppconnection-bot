@@ -1,13 +1,15 @@
 const socket = io();
-console.log("axios", axios);
 
 const api = axios.create({
   baseURL: "http://localhost:3000",
 });
 
 async function sessionStart() {
-  const resp = await api.get("/session/start");
-  console.log("start/", resp.data);
+  try {
+    const resp = await api.get("/session/start");
+    console.log("start/", resp.data);
+    toast("iniciando bot, aguarde.");
+  } catch (error) {}
 }
 
 async function sessionStop() {
@@ -21,14 +23,18 @@ async function sessionLogout() {
 }
 
 async function sessionStatus() {
-  const resp = await api.get("/session/status");
-  console.log("status/", resp.data);
+  return api.get("/session/status");
 }
 
 function updateQrCode({ code, attempts }) {
   if (code) {
+    console.log("show qrcode");
     document.getElementById("qrcode").src = code;
     document.getElementById("attempts").innerText = attempts;
+    document.getElementById("qrcode").style.visibility = "visible";
+  } else {
+    console.log("hidden qrcode");
+    document.getElementById("qrcode").style.visibility = "hidden";
   }
 }
 
@@ -36,9 +42,11 @@ function updateStatusSession(statusSession) {
   document.getElementById("statusSession").innerText = statusSession;
 }
 function updateDeviceInfo(data) {
-  const { pushname, platform, phone, battery, connected } = data;
+  const { pushname, platform, phone, battery, connected, wppVersion } = data;
   console.log("updateDeviceInfo", pushname);
-  document.getElementById("name").innerText = pushname;
+  document.getElementById("name").innerText = pushname || "";
+  document.getElementById("platform").innerText = platform || "";
+  document.getElementById("wppVersion").innerText = wppVersion || "";
 }
 
 function handleCommand(cmd) {
@@ -46,7 +54,33 @@ function handleCommand(cmd) {
   console.log("handleCommand", cmd);
 }
 
+function toast(text) {
+  Toastify({
+    text: text,
+    duration: 3000,
+    newWindow: true,
+    close: false,
+    gravity: "bottom", // `top` or `bottom`
+    position: "left", // `left`, `center` or `right`
+    stopOnFocus: true, // Prevents dismissing of toast on hover
+  }).showToast();
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  toast("teste toast");
+  sessionStatus()
+    .then((data) => {
+      if (data.data?.status) {
+        const { hostDevice, statusSession, qrCode } = data.data.status;
+        updateDeviceInfo(hostDevice);
+        updateStatusSession(statusSession);
+        updateQrCode(qrCode);
+      }
+    })
+    .catch((err) => {
+      toast("status error");
+      console.log("status err", err);
+    });
   socket.on("connect", () => {
     console.log("socket connected");
     socket.on("status", (data) => {

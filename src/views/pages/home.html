@@ -10,6 +10,11 @@
       integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
       crossorigin="anonymous"
     />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    />
     <style>
       .containerT {
         height: 100vh;
@@ -53,7 +58,7 @@
       }
       .rightCard {
         display: flex;
-        justify-content: center;
+        flex-direction: column;
       }
 
       .myButton {
@@ -85,24 +90,40 @@
         box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%),
           0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
       }
+      .status-session {
+        width: 100%;
+        min-height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .qrCode-card {
+        width: 100%;
+        height: 100%;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
       .qrCode {
         width: 250px;
         height: 250px;
+        visibility: hidden;
       }
     </style>
   </head>
   <body>
     <div class="containerT">
       <header>
-        <div class="header">
-          <h1>bot</h1>
-        </div>
+        <div class="header"></div>
       </header>
       <main>
         <div class="content">
           <div class="leftCard">
             <div>
               <h1 id="name"></h1>
+              <h1 id="platform"></h1>
+              <h1 id="wppVersion" />
               <h1 id="wppNumber"></h1>
               <h1 id="wppVersion"></h1>
               <h1 id="batteryLevel"></h1>
@@ -114,9 +135,13 @@
             </div>
           </div>
           <div class="rightCard">
-            <h1 id="statusSession"></h1>
-            <h1 id="attempts"></h1>
-            <img class="qrCode" id="qrcode" src="" />
+            <div class="status-session">
+              <h1 id="statusSession"></h1>
+            </div>
+            <div class="qrCode-card">
+              <h1 id="attempts"></h1>
+              <img class="qrCode" id="qrcode" src="" />
+            </div>
           </div>
         </div>
       </main>
@@ -128,6 +153,10 @@
     ></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/toastify-js"
+    ></script>
     <script src="./../scripts/home.js"></script>
   </body>
 </html>
