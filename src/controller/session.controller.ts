@@ -1,3 +1,4 @@
+import { HostDevice } from "@wppconnect-team/wppconnect";
 import { Request, Response } from "express";
 import { container } from "tsyringe";
 import { Wpp } from "../wppBot";
@@ -41,12 +42,17 @@ export class SessionController {
     }
 
     if (!wppBot.client) {
+      console.log("client", wppBot.client);
       return res.status(200).json({ message: "wpp client does not exist" });
     }
 
     try {
-      const close = wppBot.client.close();
-      return res.status(200).json({ message: "wpp close session", close });
+      const closed = await wppBot.client.close();
+      console.log(
+        "🚀 ~ file: session.controller.ts ~ line 50 ~ SessionController ~ stop ~ close",
+        closed
+      );
+      return res.status(200).json({ message: "wpp close session", closed });
     } catch (error) {
       return res
         .status(500)
@@ -59,61 +65,21 @@ export class SessionController {
     if (!wppBot) {
       return res.status(200).json({ message: "wpp intance does not exist" });
     }
-
-    if (!wppBot.client) {
-      return res.status(200).json({ message: "wpp client does not exist" });
-    }
-
-    let isLoggedIn: any;
-
     try {
-      isLoggedIn = await wppBot.client.isLoggedIn();
-    } catch (error) {
-      isLoggedIn = false;
-    }
-
-    if (!isLoggedIn) {
-      return res.status(500).json({ message: "session is not loggedin" });
-    }
-
-    try {
-      const loggedout = await wppBot.client.logout();
-      return res.status(200).json({ message: "session loggedout", loggedout });
+      await wppBot.logout();
+      return res.status(200).json({ message: "session logged out" });
     } catch (error: any) {
-      return res
-        .status(500)
-        .json({ message: "could not loggedout", error: error.message });
+      return res.status(500).json({ error: error.message });
     }
   }
 
   async status(req: Request, res: Response) {
     const { wppBot } = req;
-
-    if (!wppBot) {
-      return res.status(200).json({ message: "wpp intance does not exist" });
-    }
-
-    if (!wppBot.client) {
-      return res.status(200).json({ message: "wpp client does not exist" });
-    }
-
-    let isConnected: any;
-    let isLoggedIn: any;
-
     try {
-      isConnected = await wppBot.client.isConnected();
-    } catch (error) {
-      isConnected = "session closed";
+      const status = await wppBot.getStatus();
+      return res.status(200).json({ message: "sucess", status });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
     }
-
-    try {
-      isLoggedIn = await wppBot.client.isLoggedIn();
-    } catch (error) {
-      isLoggedIn = "session closed";
-    }
-
-    return res
-      .status(200)
-      .json({ isConnected, isLoggedIn, statusSession: wppBot.statusSession });
   }
 }
